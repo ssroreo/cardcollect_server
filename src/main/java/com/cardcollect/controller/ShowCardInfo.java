@@ -2,6 +2,7 @@ package com.cardcollect.controller;
 
 import com.cardcollect.controller.DB.ConnDB;
 import com.cardcollect.controller.domain.CardBag;
+import com.cardcollect.controller.domain.CardInfo;
 
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
@@ -17,43 +18,45 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-@WebServlet(name = "ShowCard",urlPatterns = "/ShowCard")
-public class ShowCard extends HttpServlet {
+@WebServlet(name = "ShowCardInfo",urlPatterns = "/ShowCardInfo")
+public class ShowCardInfo extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Connection conn = ConnDB.getConnection();
         ConnDB.closeConnection(conn);
-        String sql = "select * from baginfo";
-        List<CardBag> bagList = showCardBag(sql);
+        String sql = "select * from cardinfo";
+        List<CardInfo> bagList = showCardInfo(sql);
         response.setContentType("text/html; charset=utf-8");
         PrintWriter out = response.getWriter();
-        out.println("{\"baginfo\":[");
-        String strBagInfo = "";
+        out.println("{\"cardinfo\":[");
+        String strCardInfo = "";
         for (int i=0;i<bagList.size();i++){
-            strBagInfo+=("{\"id\":\""+bagList.get(i).getId()+"\",\"title\":\""+(bagList.get(i).getBagName())+"\",\"img\":\""+(bagList.get(i).getImg())+"\"," +
-                    "\"url\":\"../index/index\"}");
-            if(i!=bagList.size()-1) strBagInfo+=",";
+            strCardInfo+=("{\"id\":\""+bagList.get(i).getId()+"\",\"cardname\":\""+(bagList.get(i).getCardname())+"\",\"img\":\""+(bagList.get(i).getImg())+"\"," +
+                    "\"cardnum\":\""+bagList.get(i).getCardnum()+"\"}");
+            if(i!=bagList.size()-1) strCardInfo+=",";
         }
-        out.println(strBagInfo+"]}");
+        out.println(strCardInfo+"]}");
     }
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doPost(request,response);
     }
 
-    public List<CardBag> showCardBag(String sql) {
+    public List<CardInfo> showCardInfo(String sql) {
         // TODO Auto-generated method stub
         Connection conn = ConnDB.getConnection();
         PreparedStatement stmt = ConnDB.getPreparedStatement(conn,sql);
         ResultSet rs = ConnDB.getResultSet(stmt);
-        List<CardBag> cardBagList = new ArrayList();
+        List<CardInfo> cardInfoList = new ArrayList();
         try {
             while(rs.next())
             {
-                CardBag cardBag = new CardBag();
-                cardBag.setId(rs.getInt("id"));
-                cardBag.setBagName(rs.getString("bagname"));
-                cardBag.setImg(rs.getString("img"));
-                cardBagList.add(cardBag);
+                CardInfo cardInfo = new CardInfo();
+                cardInfo.setId(rs.getInt("id"));
+                cardInfo.setBagid(rs.getInt("bagid"));
+                cardInfo.setCardname(rs.getString("cardname"));
+                cardInfo.setCardnum(rs.getInt("cardnum"));
+                cardInfo.setImg(rs.getString("img"));
+                cardInfoList.add(cardInfo);
             }
         } catch (SQLException e) {
             // TODO Auto-generated catch block
@@ -63,6 +66,6 @@ public class ShowCard extends HttpServlet {
         ConnDB.closePreparedStatement(stmt);
         ConnDB.closeResultSet(rs);
         ConnDB.closeConnection(conn);
-        return cardBagList;
+        return cardInfoList;
     }
 }
