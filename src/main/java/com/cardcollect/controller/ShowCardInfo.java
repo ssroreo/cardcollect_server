@@ -30,7 +30,7 @@ public class ShowCardInfo extends HttpServlet {
         out.println("{\"cardinfo\":[");
         String strCardInfo = "";
         for (int i=0;i<bagList.size();i++){
-            strCardInfo+=("{\"id\":\""+bagList.get(i).getId()+"\",\"cardname\":\""+(bagList.get(i).getCardname())+"\",\"img\":\""+(bagList.get(i).getImg())+"\"," +
+            strCardInfo+=("{\"id\":\""+bagList.get(i).getId()+"\",\"cardname\":\""+(bagList.get(i).getCardname())+"\",\"bagid\":\""+(bagList.get(i).getBagid())+"\"," +
                     "\"cardnum\":\""+bagList.get(i).getCardnum()+"\"}");
             if(i!=bagList.size()-1) strCardInfo+=",";
         }
