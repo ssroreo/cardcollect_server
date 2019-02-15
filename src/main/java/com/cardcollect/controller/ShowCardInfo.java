@@ -21,17 +21,18 @@ import java.util.List;
 @WebServlet(name = "ShowCardInfo",urlPatterns = "/ShowCardInfo")
 public class ShowCardInfo extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String bagid = request.getParameter("bagid");
         Connection conn = ConnDB.getConnection();
         ConnDB.closeConnection(conn);
-        String sql = "select * from cardinfo";
+        String sql = "select * from cardinfo where bagid="+bagid+" order by cardnum;";
+        System.out.println(sql);
         List<CardInfo> bagList = showCardInfo(sql);
         response.setContentType("text/html; charset=utf-8");
         PrintWriter out = response.getWriter();
         out.println("{\"cardinfo\":[");
         String strCardInfo = "";
         for (int i=0;i<bagList.size();i++){
-            strCardInfo+=("{\"id\":\""+bagList.get(i).getId()+"\",\"cardname\":\""+(bagList.get(i).getCardname())+"\",\"bagid\":\""+(bagList.get(i).getBagid())+"\"," +
-                    "\"cardnum\":\""+bagList.get(i).getCardnum()+"\"}");
+            strCardInfo+=("{\"cardname\":\""+(bagList.get(i).getCardname())+"\"}");
             if(i!=bagList.size()-1) strCardInfo+=",";
         }
         out.println(strCardInfo+"]}");
@@ -51,11 +52,7 @@ public class ShowCardInfo extends HttpServlet {
             while(rs.next())
             {
                 CardInfo cardInfo = new CardInfo();
-                cardInfo.setId(rs.getInt("id"));
-                cardInfo.setBagid(rs.getInt("bagid"));
                 cardInfo.setCardname(rs.getString("cardname"));
-                cardInfo.setCardnum(rs.getInt("cardnum"));
-                cardInfo.setImg(rs.getString("img"));
                 cardInfoList.add(cardInfo);
             }
         } catch (SQLException e) {
